@@ -69,6 +69,16 @@ public class TodoController {
     return ResponseEntity.ok(existingTodo);
 }
 
-// Add Delete Todo 
+// Delete
+@DeleteMapping("/{id}")
+public ResponseEntity<String> deleteTodo(@PathVariable String id){
+    // Remove Todo by id
+    boolean removed = todos.removeIf(todo -> todo.getId().equals(id));
 
+    // Check if removed successfully
+    if (!removed) {
+        return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok().body("Success");
+}
 }
