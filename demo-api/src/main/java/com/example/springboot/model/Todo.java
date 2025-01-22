@@ -3,14 +3,14 @@ package com.example.springboot.model;
 public class Todo {
     private String id;
     private String title;
-    private boolean completed;
+    private Boolean completed;
     // Add Deleted
 
     // Constructors
     public Todo() {
     }
 
-    public Todo(String id, String title, boolean completed) {
+    public Todo(String id, String title, Boolean completed) {
         this.id = id;
         this.title = title;
         this.completed = completed;
@@ -37,11 +37,11 @@ public class Todo {
     }
 
     // Completed
-    public boolean isCompleted() {
+    public Boolean isCompleted() {
         return completed;
     }
 
-    public void setCompleted(boolean completed) {
+    public void setCompleted(Boolean completed) {
         this.completed = completed;
     }
 

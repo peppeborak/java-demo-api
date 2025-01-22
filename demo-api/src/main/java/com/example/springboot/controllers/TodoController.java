@@ -22,7 +22,8 @@ public class TodoController {
         if(newTodo.getTitle() == null){
             return ResponseEntity.badRequest().build();
         }
-
+        // set completed on new todos to false
+        newTodo.setCompleted(false);
         newTodo.setId(UUID.randomUUID().toString());
         todos.add(newTodo);
 
@@ -39,9 +40,14 @@ public class TodoController {
     @PutMapping("/{id}")
     public ResponseEntity<Todo> updateTodo(@PathVariable String id, @RequestBody Todo updatedTodo) {
 
+    // Validation if title is provided
     if(updatedTodo.getTitle() == null){
         return ResponseEntity.badRequest().build();
     }
+    if(updatedTodo.isCompleted() == null){
+        return ResponseEntity.badRequest().build();
+    }
+
     // Find Todo by id
     Todo existingTodo = todos.stream()
         .filter(todo -> todo.getId().equals(id))
