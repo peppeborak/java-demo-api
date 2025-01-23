@@ -1,84 +1,65 @@
 package com.example.demoapi.controllers;
 
 import com.example.demoapi.models.Todo;
-
+import com.example.demoapi.repositories.TodoRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/todos") 
+@RequestMapping("/todos")
 public class TodoController {
 
-    // Array for the todos
-    private final List<Todo> todos = new ArrayList<>();
+    private final TodoRepository todoRepository;
 
-    // Create Todo
-    @PostMapping
-    public ResponseEntity<Todo> createTodo(@RequestBody Todo newTodo) {
-        if(newTodo.getTitle() == null){
-            return ResponseEntity.badRequest().build();
-        }
-        // set completed on new todos to false
-        newTodo.setCompleted(false);
-        newTodo.setId(UUID.randomUUID().toString());
-        todos.add(newTodo);
-
-        return ResponseEntity.ok(newTodo);
+    public TodoController(TodoRepository todoRepository) {
+        this.todoRepository = todoRepository;
     }
 
-    // Retrieve all Todos
+    // Get all todos
     @GetMapping
     public List<Todo> getAllTodos() {
-        return todos;
+        return todoRepository.findAll();
     }
 
-    // Update Todo Title
+    // Get a todo by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Todo> getTodoById(@PathVariable Integer id) {
+        Optional<Todo> todo = todoRepository.findById(id);
+        return todo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Create a new todo
+    @PostMapping
+    public ResponseEntity<Todo> createTodo(@RequestBody Todo todo) {
+        if (todo.getTitle() == null || todo.getTitle().trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        Todo savedTodo = todoRepository.save(todo);
+        return ResponseEntity.ok(savedTodo);
+    }
+
+    // Update a todo
     @PutMapping("/{id}")
-    public ResponseEntity<Todo> updateTodo(@PathVariable String id, @RequestBody Todo updatedTodo) {
-
-    // Validation if title is provided
-    if(updatedTodo.getTitle() == null){
-        return ResponseEntity.badRequest().build();
+    public ResponseEntity<Todo> updateTodo(@PathVariable Integer id, @RequestBody Todo todoDetails) {
+        return todoRepository.findById(id)
+                .map(todo -> {
+                    todo.setTitle(todoDetails.getTitle());
+                    todo.setCompleted(todoDetails.getCompleted());
+                    return ResponseEntity.ok(todoRepository.save(todo));
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
-    if(updatedTodo.isCompleted() == null){
-        return ResponseEntity.badRequest().build();
-    }
 
-    // Find Todo by id
-    Todo existingTodo = todos.stream()
-        .filter(todo -> todo.getId().equals(id))
-        .findFirst()
-        .orElse(null);
-
-    // Check if Todo exist
-    if (existingTodo == null) {
+    // Delete a todo
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTodo(@PathVariable Integer id) {
+        if (todoRepository.existsById(id)) {
+            todoRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.notFound().build();
     }
-    
-
-    // Update the Todo Title
-    existingTodo.setTitle(updatedTodo.getTitle());
-    // Update the Todo Completed
-    existingTodo.setCompleted(updatedTodo.isCompleted());
-
-    // Return the updated Todo and a 200 statusmessage (ok)
-    return ResponseEntity.ok(existingTodo);
-}
-
-// Delete
-@DeleteMapping("/{id}")
-public ResponseEntity<String> deleteTodo(@PathVariable String id){
-    // Remove Todo by id
-    boolean removed = todos.removeIf(todo -> todo.getId().equals(id));
-
-    // Check if removed successfully
-    if (!removed) {
-        return ResponseEntity.notFound().build();
-    }
-    return ResponseEntity.ok().body("Success");
-}
 }

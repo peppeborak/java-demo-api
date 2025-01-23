@@ -1,3 +1,5 @@
 /Users/peppeborak/IdeaProjects/java-demo-api/demo-api/src/main/java/com/example/demoapi/DemoApiApplication.java
 /Users/peppeborak/IdeaProjects/java-demo-api/demo-api/src/main/java/com/example/demoapi/controllers/TodoController.java
 /Users/peppeborak/IdeaProjects/java-demo-api/demo-api/src/main/java/com/example/demoapi/models/Todo.java
+/Users/peppeborak/IdeaProjects/java-demo-api/demo-api/src/main/java/com/example/demoapi/repositories/TodoRepository.java
+/Users/peppeborak/IdeaProjects/java-demo-api/demo-api/src/main/java/com/example/demoapi/services/TodoService.java
