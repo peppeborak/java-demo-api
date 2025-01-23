@@ -1,3 +1,5 @@
+com/example/demoapi/repositories/TodoRepository.class
 com/example/demoapi/controllers/TodoController.class
 com/example/demoapi/DemoApiApplication.class
 com/example/demoapi/models/Todo.class
+com/example/demoapi/services/TodoService.class
